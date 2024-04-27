@@ -14,10 +14,12 @@ const config: Config = {
     extend: {
       colors: {
         yellow: {
-          200: "#FBFD8C",
-          400: "#EDF123",
-          500: "#FAFF06",
-
+          200: "#FDFF84",
+          400: "#FAFE3B",
+          500: "#FAFF00",
+          600: "#D3D709",
+          700: '#E1E449',
+          800: '#D3D709',
         }
 
       }
