@@ -11,10 +11,14 @@ import Image from "next/image";
 
 import { useEffect, useRef, useState } from "react";
 
+type Video = {
+  
+}
+
 export default function Home() {
 
-  const videoRef = useRef(null)
-  const photoRef = useRef(null)
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const photoRef = useRef<HTMLCanvasElement>(null)
 
   const getVideo = () => {
     navigator.mediaDevices
@@ -22,9 +26,11 @@ export default function Home() {
         video: { width: 1920, height: 1080 }
       })
       .then(stream => {
-        let video = videoRef.current;
-        video.srcObject = stream;
-        video.play();
+        if (videoRef.current) {
+          let video = videoRef.current;
+          video.srcObject = stream;
+          video.play();
+        }
       })
       .catch( err => {
         console.error(err);
@@ -35,23 +41,22 @@ export default function Home() {
     const width = 414;
     const height = width / (16/9);
 
-    let video = videoRef.current;
-    let photo = photoRef.current;
+    if (photoRef.current && videoRef.current) {
+      let video = videoRef.current;
+      let photo = photoRef.current;
 
-    photo.width = width;
-    photo.height = height;
+      photo.width = width;
+      photo.height = height;
+  
+      let ctx = photo.getContext('2d');
 
-    let ctx = photo.getContext('2d');
-    ctx.drawImage(video, 0, 0, width, height);
+      if (ctx) {
+        ctx.drawImage(video, 0, 0, width, height);
+      }
+    }
+
   }
 
-  const closePhoto = () => {
-    let photo = photoRef.current;
-    let ctx = photo.getContext('2d');
-
-    ctx.clearReact(0, 0, photo.whidth, photo.height);
-    
-  }
 
   useEffect( () => {
     getVideo();
