@@ -1,3 +1,5 @@
+"use client"
+
 import { IoPersonCircle } from "react-icons/io5";
 import { IoMenu } from "react-icons/io5";
 
@@ -7,10 +9,63 @@ import sun_sad from '../../public/sun_sad.svg';
 
 import Image from "next/image";
 
+import { useEffect, useRef, useState } from "react";
+
 export default function Home() {
+
+  const videoRef = useRef(null)
+  const photoRef = useRef(null)
+
+  const getVideo = () => {
+    navigator.mediaDevices
+      .getUserMedia({
+        video: { width: 1920, height: 1080 }
+      })
+      .then(stream => {
+        let video = videoRef.current;
+        video.srcObject = stream;
+        video.play();
+      })
+      .catch( err => {
+        console.error(err);
+      })
+  }
+
+  const takePhoto = () => {
+    const width = 414;
+    const height = width / (16/9);
+
+    let video = videoRef.current;
+    let photo = photoRef.current;
+
+    photo.width = width;
+    photo.height = height;
+
+    let ctx = photo.getContext('2d');
+    ctx.drawImage(video, 0, 0, width, height);
+  }
+
+  const closePhoto = () => {
+    let photo = photoRef.current;
+    let ctx = photo.getContext('2d');
+
+    ctx.clearReact(0, 0, photo.whidth, photo.height);
+    
+  }
+
+  useEffect( () => {
+    getVideo();
+  }, [videoRef]);
+
   return (
     <main className="w-full h-full bg-slate-50 flex flex-col gap-10">
       
+      <div className="">
+        <video ref={videoRef}></video>
+        <button onClick={takePhoto}>SNAP!</button>
+        <canvas ref={photoRef}></canvas>
+      </div>
+
       <div className="h-20 flex justify-between p-4">
         
         <div className="flex items-center justify-center gap-6">
