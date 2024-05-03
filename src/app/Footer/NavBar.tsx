@@ -4,8 +4,12 @@ export default function NavBar () {
 
     return (
 
-        <div>
-            nav
+        <div className="bg-white h-20 rounded-t-full">
+            
+            <div>
+
+            </div>
+
         </div>
 
     )

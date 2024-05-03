@@ -9,7 +9,7 @@ export default function Header() {
 
     return (
 
-        <div className="h-20 flex justify-between p-4">
+        <div className="h-16 flex justify-between p-4">
             
             <div className="flex items-center justify-center gap-6">
 

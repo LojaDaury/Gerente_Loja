@@ -7,7 +7,7 @@ import NavBar from "./Footer/NavBar";
 export default function Home() {
 
   return (
-    <main className="w-full h-full bg-slate-50 flex flex-col gap-10">
+    <main className="w-screen h-screen flex flex-col">
       
       <Header/>
 
