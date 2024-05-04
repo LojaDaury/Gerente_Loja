@@ -80,12 +80,12 @@ export default function CheckList() {
         <div className="px-10 w-full h-full overflow-y-scroll">
 
             {   (cam == true) ? (
-                    <div className="absolute left-0 top-0 right-0 bottom-0 bg-black z-20">
+                    <div className="absolute left-0 top-0 right-0 bottom-0 overflow-hidden bg-black z-20">
                         
                         <video ref={videoRef} className="absolute left-0 top-0 right-0 bottom-0"></video>
                         
                         <canvas ref={photoRef} 
-                            className={`g-slate-400 absolute top-0 right-0 bottom-0 left-0 ${ hasPhoto ? 'left-0': '-left-full'}`}/>
+                            className={`g-slate-400 absolute top-0 right-0 bottom-0 duration-500  ${ hasPhoto ? 'left-0': '-left-[1999px]'}`}/>
                         
                         <button onClick={() => {setCam(false), setHasPhoto(false)}} 
                             className="absolute top-6 left-6 bg-white text-black rounded-full duration-300 hover:top-5 hover:left-7">
