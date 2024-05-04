@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { IoPersonCircle } from "react-icons/io5";
+import { IoPersonCircle, IoTrash } from "react-icons/io5";
+import { IoIosClose } from "react-icons/io";
 
 import Image from "next/image";
 
@@ -9,14 +10,15 @@ export default function CheckList() {
 
     const [cam, setCam] = useState(false)
 
+    const [hasPhoto, setHasPhoto] = useState(false)
+
     const videoRef = useRef<HTMLVideoElement>(null)
     const photoRef = useRef<HTMLCanvasElement>(null)
 
     const getVideo = () => {
 
-        setCam(true)
         console.log(innerWidth, innerHeight)
-
+        
         navigator.mediaDevices
         .getUserMedia({
             video: { width: innerWidth, height: innerHeight }
@@ -31,9 +33,14 @@ export default function CheckList() {
         .catch( err => {
             console.error(err);
         })
+
+        setCam(true)
     }
 
     const takePhoto = () => {
+        
+        setHasPhoto(true)
+
         const width = innerWidth;
         const height = innerHeight;
 
@@ -62,24 +69,45 @@ export default function CheckList() {
             }
         }
 
+
     }
 
 
-    useEffect( () => {
-        getVideo();
-    }, [videoRef]);
+    
 
     return (
 
         <div className="px-10 w-full h-full overflow-y-scroll">
 
-            {
-                (cam == true) ? (
+            {   (cam == true) ? (
                     <div className="absolute left-0 top-0 right-0 bottom-0 bg-black z-20">
-                        <video ref={videoRef} className=""></video>
-                        <canvas ref={photoRef}></canvas>
-                        <button onClick={() => setCam(false)} className="bg-slate-100 text-black rounded-full py-1 px-3">X</button>
-                        <button onClick={takePhoto} className="bg-white">SNAP!</button>
+                        
+                        <video ref={videoRef} className="absolute left-0 top-0 right-0 bottom-0"></video>
+                        
+                        <canvas ref={photoRef} 
+                            className={`g-slate-400 absolute top-0 right-0 bottom-0 left-0 ${ hasPhoto ? 'left-0': '-left-full'}`}/>
+                        
+                        <button onClick={() => {setCam(false), setHasPhoto(false)}} 
+                            className="absolute top-6 left-6 bg-white text-black rounded-full duration-300 hover:top-5 hover:left-7">
+                            <IoIosClose size={40}/>        
+                        </button>
+                        
+                        <div className="flex justify-center items-end gap-6 absolute bottom-12 left-2/4">
+
+                            <button onClick={takePhoto} 
+                                className="bg-gray-600 hover:bg-gray-300 duration-500 
+                                    border-4 border-gray-300 hover:border-gray-600 w-16 h-16 
+                                    rounded-full"/>
+
+                            <button onClick={() => setHasPhoto(false)} 
+                                className="bg-white hover:bg-gray-200 duration-500 
+                                    border-2 border-gray-400 hover:border-gray-600 p-2 
+                                    rounded-full">
+                                <IoTrash size={28}/>
+                            </button>
+
+                        </div>
+
                     </div>
                 ) : (
                     <div/>
@@ -123,7 +151,6 @@ export default function CheckList() {
                 </div>
 
             </div>
-
            
         </div>
 
