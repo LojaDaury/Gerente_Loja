@@ -94,8 +94,8 @@ export default function CheckList() {
                         
                         <div className="flex justify-center items-end gap-6 absolute bottom-12 left-0 right-0">
 
-                            <button onClick={() => setCam(false)} 
-                                className={`bg-white hover:bg-gray-400 duration-500 
+                            <button disabled={!hasPhoto} onClick={() => setCam(false)} 
+                                className={` hover:bg-gray-400 duration-500 
                                     border-2 border-white p-2 
                                     rounded-full ${hasPhoto?'bg-green-400 text-white hover:bg-green-600': 'bg-white text-black'}`}>
                                 <IoCheckmark  size={28}/>

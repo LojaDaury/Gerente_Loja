@@ -6,3 +6,8 @@ Fazer barra de navegação
 Entender o pq a resolução do video não esta preenchendo a telas
 
 Transformar as tasks em ARRAY
+
+
+Talvez a forma de progresso do duoligo não seja ideal, pois nela o 
+gerente deve seguir uma ordem de progresso. e havera momentos em 
+que ele tera que pular alguma etapa pois a seção estara sendo arrumada ainda
