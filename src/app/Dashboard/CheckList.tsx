@@ -4,7 +4,7 @@ import { IoIosClose } from "react-icons/io";
 
 import Image from "next/image";
 
-import medalha from '../../../public/medalha (1).png';
+import medalha from '../Assets/medalha (1).png';
 
 export default function CheckList() {
 
@@ -82,7 +82,7 @@ export default function CheckList() {
             {   (cam == true) ? (
                     <div className="absolute left-0 top-0 right-0 bottom-0 overflow-hidden bg-black z-20">
                         
-                        <video ref={videoRef} className="absolute left-0 top-0 right-0 bottom-0"></video>
+                        <video ref={videoRef} className="absolute w-screen h-screen left-0 top-0"></video>
                         
                         <canvas ref={photoRef} 
                             className={`g-slate-400 absolute top-0 right-0 bottom-0 duration-500  ${ hasPhoto ? 'left-0': '-left-[1999px]'}`}/>
@@ -143,8 +143,19 @@ export default function CheckList() {
 
             </div>
 
-            <div className="flex  p-10">
+            <div className="flex flex-col p-10 gap-6">
 
+                <div className="flex flex-col items-center">
+                
+                    <button
+                        onClick={() => getVideo()} 
+                        className="flex shadow-sm_gray p-4 rounded-xl z-10 bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-400"
+                    >
+                        <text className="font-black drop-shadow-md text-white">Fachada da Loja</text>
+                    </button>
+
+                    <Image alt="" src={medalha} className="w-14 h-14 -mt-2"/>
+                </div>
                 <div className="flex flex-col items-center">
                 
                     <button

@@ -1,3 +1,8 @@
 Instale a biblioteca react-native-camera:
 
 
+Fazer barra de navegação
+
+Entender o pq a resolução do video não esta preenchendo a telas
+
+Transformar as tasks em ARRAY

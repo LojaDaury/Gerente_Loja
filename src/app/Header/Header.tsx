@@ -1,7 +1,7 @@
 import { IoMenu, IoPersonCircle } from "react-icons/io5";
 
-import sun_happy from '../../public/sun_happy.svg';
-import sun_sad from '../../../public/sun_sad.svg';
+import sun_happy from '../Assets/sun_happy.svg';
+import sun_sad from '../Assets/sun_sad.svg';
 
 import Image from "next/image";
 
