@@ -19,8 +19,18 @@ export default function NavBar () {
         <div className="bg-gradient-to-b from-yellow-300 to-yellow-100 h-28 shadow-sm_yellow pb-2 rounded-t-[2.5rem] flex px-2 justify-between items-center">
             
             { buttons.map( (val, id) => (
-                <button key={id} onClick={() => setSelect(id)} className={`flex  duration-300 rounded-full    ${id == select?'border-white bg-yellow-500 p-3 border-4 shadow-sm_yellow' :'border-transparent p-3 bg-yellow-50 shadow-sm_black_inset'}`}>
-                    <Image alt="" src={val} className="h-10 w-10"/>
+                <button 
+                    key={id} 
+                    onClick={() => setSelect(id)} 
+                    className={`
+                        flex  duration-300 rounded-full  
+                        ${id == select
+                            ?'border-white bg-yellow-500 p-3 border-4 shadow-sm_yellow' 
+                            :'border-transparent p-3 bg-yellow-50 shadow-sm_black_inset'
+                        }
+                    `}>
+                        
+                        <Image alt="" src={val} className="h-10 w-10"/>
                 </button>
             ))
             }
