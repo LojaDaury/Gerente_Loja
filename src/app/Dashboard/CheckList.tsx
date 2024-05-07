@@ -88,7 +88,7 @@ export default function CheckList() {
 
                         <div className={`absolute top-10 right-0 bottom-0 duration-500 ${ hasPhoto ? 'left-0': '-left-[1999px]'}`}>
                             <canvas ref={photoRef} 
-                            className={`py-8`}/>
+                            className={``}/>
                         </div>
                         
                         <button onClick={() => {setCam(false)}} 
