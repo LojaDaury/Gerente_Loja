@@ -87,7 +87,7 @@ export default function CheckList() {
                         </div>
 
                         <canvas ref={photoRef} 
-                            className={`g-slate-400 absolute top-0 right-0 bottom-0 duration-500  ${ hasPhoto ? 'left-0': '-left-[1999px]'}`}/>
+                            className={`g-slate-400 absolute top-6 right-0 bottom-6 duration-500  ${ hasPhoto ? 'left-0': '-left-[1999px]'}`}/>
                         
                         <button onClick={() => {setCam(false)}} 
                             className="absolute top-6 left-6 bg-white text-black rounded-full duration-300 hover:top-5 hover:left-7">
