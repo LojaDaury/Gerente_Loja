@@ -82,12 +82,14 @@ export default function CheckList() {
             {   (cam == true) ? (
                     <div className="absolute left-0 top-0 right-0 bottom-0 overflow-hidden bg-black z-20">
                         
-                        <div className="w-screen h-screen">
-                            <video ref={videoRef} className=" w-screen h-screen pb-6"></video>
+                        <div className="w-screen h-screen absolute top-10 right-0 bottom-0 left-0">
+                            <video ref={videoRef} className=" w-screen h-screen"></video>
                         </div>
 
-                        <canvas ref={photoRef} 
-                            className={`g-slate-400 absolute top-6 right-0 bottom-6 duration-500  ${ hasPhoto ? 'left-0': '-left-[1999px]'}`}/>
+                        <div className={`absolute top-10 right-0 bottom-0 duration-500 ${ hasPhoto ? 'left-0': '-left-[1999px]'}`}>
+                            <canvas ref={photoRef} 
+                            className={`py-8`}/>
+                        </div>
                         
                         <button onClick={() => {setCam(false)}} 
                             className="absolute top-6 left-6 bg-white text-black rounded-full duration-300 hover:top-5 hover:left-7">
