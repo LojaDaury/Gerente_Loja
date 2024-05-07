@@ -82,8 +82,10 @@ export default function CheckList() {
             {   (cam == true) ? (
                     <div className="absolute left-0 top-0 right-0 bottom-0 overflow-hidden bg-black z-20">
                         
-                        <video ref={videoRef} className="absolute w-screen h-screen my-10 left-0 top-0"></video>
-                        
+                        <div className="w-screen h-screen">
+                            <video ref={videoRef} className=" w-screen h-screen pb-6"></video>
+                        </div>
+
                         <canvas ref={photoRef} 
                             className={`g-slate-400 absolute top-0 right-0 bottom-0 duration-500  ${ hasPhoto ? 'left-0': '-left-[1999px]'}`}/>
                         
@@ -92,7 +94,7 @@ export default function CheckList() {
                             <IoIosClose size={40}/>        
                         </button>
                         
-                        <div className="flex justify-center items-end gap-6 absolute bottom-12 left-0 right-0">
+                        <div className="flex justify-center items-end gap-6 absolute bottom-6 left-0 right-0">
 
                             <button disabled={!hasPhoto} onClick={() => setCam(false)} 
                                 className={` hover:bg-gray-400 duration-500 
