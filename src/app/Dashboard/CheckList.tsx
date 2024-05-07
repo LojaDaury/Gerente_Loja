@@ -21,7 +21,7 @@ export default function CheckList() {
         
         navigator.mediaDevices
         .getUserMedia({
-            video: { width: innerHeight, height: innerWidth }
+            video: { facingMode: 'environment', width: innerHeight, height: innerWidth }
         })
         .then(stream => {
             if (videoRef.current) {
