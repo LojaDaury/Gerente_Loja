@@ -1,16 +1,21 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { IoPersonCircle, IoTrash, IoCheckmark  } from "react-icons/io5";
 import { IoIosClose } from "react-icons/io";
 
 import Image from "next/image";
 
 import medalha from '../Assets/medalha (1).png';
+import { CompletionContext } from "../hook/useCompletion";
 
 export default function CheckList() {
 
     const [cam, setCam] = useState(false)
 
     const [hasPhoto, setHasPhoto] = useState(false)
+
+    const [ workChecked, setWorkChecked ] = useState(0)
+
+    const {createCompletionPercentage} = useContext(CompletionContext)
 
     const videoRef = useRef<HTMLVideoElement>(null)
     const photoRef = useRef<HTMLCanvasElement>(null)
@@ -71,8 +76,6 @@ export default function CheckList() {
 
     }
 
-    const [ workChecked, setWorkChecked ] = useState(0)
-
     const [ list, setList ] = useState([
         {
             name: 'Fachada da Loja',
@@ -106,8 +109,6 @@ export default function CheckList() {
         },
     ])
 
-    const [completionPercentage, setCompletionPercentage] = useState(0);
-
     const HandleCheck = () => {
         setCam(false)
 
@@ -118,7 +119,7 @@ export default function CheckList() {
             const checkedCount = newList.filter(item => item.check).length; // Usando a lista atualizada
             const totalItems = newList.length;
             const percentage = (checkedCount / totalItems) * 100;
-            setCompletionPercentage(percentage);
+            createCompletionPercentage(percentage);
         
             return newList; // Retornando a nova lista atualizada
           });
@@ -126,7 +127,7 @@ export default function CheckList() {
 
     return (
 
-        <div className="px-10 py-2 w-full h-full overflow-y-scroll ">
+        <div className="px-10  w-full h-full overflow-y-scroll ">
 
             {   (cam == true) ? (
                     <div className="absolute left-0 top-0 right-0 bottom-0 overflow-hidden bg-black z-20">
@@ -174,32 +175,7 @@ export default function CheckList() {
                 )
             }
 
-            <div className="fixed z-10 py-4 border-b-2 shadow-sm_gray bg-white left-0 right-4 px-4">
-          
-                <div className="w-full h-3 flex bg-gray-300 rounded-full shadow-sm_gray">
-                    
-                    { completionPercentage != 0 
-                        ? <div style={{ width: `${completionPercentage}%` }} className={`duration-700 flex bg-yellow-500 rounded-full text-yellow-500 shadow-sm_yellow`}/>
-                        : <div/>
-                    }
-
-                </div>
-
-                <div style={{ width: `${completionPercentage}%` }} className={`ml-4 mt-2 duration-700  flex justify-end`}>
-            
-                    <div className="flex flex-col items-center">
-                        <text className="text-yellow-500 font-black">{completionPercentage}%</text>
-
-                        <div className="shadow-sm_yellow rounded-full">
-                            <IoPersonCircle size={40} className="text-yellow-500"/>
-                        </div>
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div className="flex flex-col pt-36 p-10 gap-16">
+            <div className="flex flex-col p-10 pb-20 gap-16">
 
                 { list.map( (val, id) => (
                     <div key={id} className="flex flex-col relative items-center">
