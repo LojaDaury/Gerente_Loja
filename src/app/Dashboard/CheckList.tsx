@@ -12,6 +12,7 @@ import { CompletionContext } from "../hook/useCompletion";
 import { storage } from "../services/firebaseConfig";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { blob } from "stream/consumers";
+import { serverTimestamp } from "firebase/database";
 
 
 export default function CheckList() {
@@ -22,7 +23,10 @@ export default function CheckList() {
 
     const [hasPhoto, setHasPhoto] = useState(false)
 
-    const [ workChecked, setWorkChecked ] = useState(0)
+    const [ workChecked, setWorkChecked ] = useState({
+        name: '',
+        id: 0
+    })
 
     const {createCompletionPercentage} = useContext(CompletionContext)
 
@@ -76,7 +80,12 @@ export default function CheckList() {
     }
 
     const uploadPhotoToStorage = async () => {
-        const storageRef = ref(storage, '1/calçado_feminino');
+        const today = new Date()
+        const day = today.getDate();
+        const month = today.getMonth() + 1;
+        const formattedDate = `${day < 10 ? ('0' + day) : day}_${month < 10 ? ('0' + month) : month}`;
+
+        const storageRef = ref(storage, `1/${formattedDate}/${workChecked.name}.jpg`);
 
 
         if (photoRef.current) {
@@ -89,7 +98,7 @@ export default function CheckList() {
                     );
                 }
             })
-          }
+        }
     };
 
     const [ list, setList ] = useState([
@@ -132,7 +141,7 @@ export default function CheckList() {
 
         setList(prevList => {
             const newList = [...prevList]; // Criando uma cópia do array original
-            newList[workChecked] = { ...newList[workChecked], check: true }; // Modificando o objeto desejado
+            newList[workChecked.id] = { ...newList[workChecked.id], check: true }; // Modificando o objeto desejado
         
             const checkedCount = newList.filter(item => item.check).length; // Usando a lista atualizada
             const totalItems = newList.length;
@@ -201,7 +210,7 @@ export default function CheckList() {
                     <div key={id} className="flex flex-col relative items-center">
                 
                         <button
-                            onClick={() => {getVideo(), setWorkChecked(id)}} 
+                            onClick={() => {getVideo(), setWorkChecked({name:val.name, id:id})}} 
                             className={`
                                 flex w-48 justify-center  p-4 rounded-xl  duration-500 delay-500  
                                 ${val.check
