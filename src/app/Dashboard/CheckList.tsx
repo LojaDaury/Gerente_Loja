@@ -1,15 +1,24 @@
 import { useContext, useEffect, useRef, useState } from "react";
+
 import { IoPersonCircle, IoTrash, IoCheckmark  } from "react-icons/io5";
 import { IoIosClose } from "react-icons/io";
 
 import Image from "next/image";
 
 import medalha from '../Assets/medalha (1).png';
+
 import { CompletionContext } from "../hook/useCompletion";
+
+import { storage } from "../services/firebaseConfig";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { blob } from "stream/consumers";
+
 
 export default function CheckList() {
 
     const [cam, setCam] = useState(false)
+
+    const [foto, setFoto] = useState<File>({} as File)
 
     const [hasPhoto, setHasPhoto] = useState(false)
 
@@ -61,20 +70,27 @@ export default function CheckList() {
             if (ctx) {
                 ctx.drawImage(video, 0, 0, width, height);
 
-                /*
-                photo.toBlob(blob => {
-                    // Criar um novo objeto de arquivo a partir do Blob
-                    const file = new File([blob], 'photo.jpg', { type: 'image/jpeg' });
-    
-                    // Agora você pode fazer o que quiser com o arquivo, como fazer upload
-                    // para um banco de dados ou exibi-lo em algum lugar
-                    uploadPhoto(file);
-                }, 'image/jpeg');
-                */
             }
         }
 
     }
+
+    const uploadPhotoToStorage = async () => {
+        const storageRef = ref(storage, '1/calçado_feminino');
+
+
+        if (photoRef.current) {
+            photoRef.current.toBlob( blob => {
+                if (blob) {
+                    uploadBytes(storageRef, blob).then(
+                        (snapshot) => {
+                            console.log('Uploaded a blob or file!');
+                        }
+                    );
+                }
+            })
+          }
+    };
 
     const [ list, setList ] = useState([
         {
@@ -112,6 +128,8 @@ export default function CheckList() {
     const HandleCheck = () => {
         setCam(false)
 
+        uploadPhotoToStorage()
+
         setList(prevList => {
             const newList = [...prevList]; // Criando uma cópia do array original
             newList[workChecked] = { ...newList[workChecked], check: true }; // Modificando o objeto desejado
@@ -122,7 +140,8 @@ export default function CheckList() {
             createCompletionPercentage(percentage);
         
             return newList; // Retornando a nova lista atualizada
-          });
+        });
+        
     }
 
     return (
@@ -177,6 +196,7 @@ export default function CheckList() {
 
             <div className="flex flex-col p-10 pb-20 gap-16">
 
+
                 { list.map( (val, id) => (
                     <div key={id} className="flex flex-col relative items-center">
                 
@@ -185,8 +205,8 @@ export default function CheckList() {
                             className={`
                                 flex w-48 justify-center  p-4 rounded-xl  duration-500 delay-500  
                                 ${val.check
-                                    ? 'bg-yellow-400 text-white ring-4 ring-yellow-200 shadow-sm_yellow animate-jump animate-delay-500 animate-duration-[1500ms]'
-                                    : 'bg-gray-100 ring-2 ring-gray-600 text-gray-700 shadow-sm_gray'
+                                    ? 'bg-yellow-400 text-white border-b-4 border-yellow-600 shadow-sm_yellow animate-jump animate-delay-500 animate-duration-[1500ms]'
+                                    : 'bg-gray-100 border-b-4 border-gray-500 text-gray-700 shadow-sm_gray'
                                 }`}
                         >
                             <text className="font-black drop-shadow-md ">{val.name}</text>

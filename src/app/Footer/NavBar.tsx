@@ -16,7 +16,7 @@ export default function NavBar () {
 
     return (
 
-        <div className="bg-gradient-to-b from-yellow-300 to-yellow-100 h-28 shadow-sm_yellow pb-2 rounded-t-[2.5rem] flex px-2 justify-between items-center">
+        <div className="bg-gradient-to-b z-10 from-yellow-300 to-yellow-100 h-28 shadow-sm_yellow pb-2 rounded-t-[2.5rem] flex px-2 justify-between items-center">
             
             { buttons.map( (val, id) => (
                 <button 

@@ -11,9 +11,6 @@ Melhorar a barra de navegação***
 
 Melhorar as animações de conclusão. ( Tanto de cada tarefa, quanto a da conclusão de todas as tarefa)
 
-Colocar a variavel de progresso em um CONTEXT***amanha
-E passar a barra de progresso para o aquivo PAGE***amanha
-
 Deixar cada tarefa como uma bolinha pequena, para facilitar ao fazer o design do proguesso
 E a bolinha se expande quando clicar nela // O nome da tarefa ja esteja embaixo
 Fazer um sombreado embaixo das tarefas

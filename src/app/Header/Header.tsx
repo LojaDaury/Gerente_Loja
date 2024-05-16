@@ -9,6 +9,7 @@ import { useContext } from "react";
 
 export default function Header() {
 
+
     const {completionPercentage} = useContext(CompletionContext)
 
     return (
@@ -45,19 +46,19 @@ export default function Header() {
 
             </div>
 
-            <div className=" py-14 bg-white px-10">
+            <div className=" pt-10 py-4 bg-white px-10">
                     
-                <div className="w-full h-2 flex bg-gray-300 rounded-full shadow-sm_gray">
+                <div className="w-full h-5 flex bg-gray-300 rounded-full ">
                     
-                    <div style={{ width: `${completionPercentage}%` }} className={`duration-700 relative bg-yellow-500 rounded-full text-yellow-500 shadow-sm_yellow`}>
+                    <div style={{ width: `${completionPercentage}%` }} className={`duration-700  relative bg-yellow-500 rounded-full text-yellow-500`}>
 
-                        <div className="flex absolute -right-4 -top-4 flex-col items-center ">
+                        <div style={{ width: `${completionPercentage}%` }} className="h-[5px] mt-[4px] ml-4 bg-yellow-200/90 rounded-full"/>
+
+                        <div className="flex absolute -right-4 -top-3 flex-col items-center ">
                             
-                            <div className="shadow-sm_yellow bg-white rounded-full">
+                            <div className=" bg-white flex rounded-full">
                                 <IoPersonCircle size={40} className="text-yellow-500"/>
                             </div>
-                            
-                            <text className="text-yellow-500 font-black">{completionPercentage}%</text>
                             
                         </div>
 
