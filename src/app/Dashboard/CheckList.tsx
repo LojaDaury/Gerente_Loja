@@ -1,6 +1,6 @@
 import { useContext, useEffect, useRef, useState } from "react";
 
-import { IoPersonCircle, IoTrash, IoCheckmark  } from "react-icons/io5";
+import { IoTrash, IoCheckmark  } from "react-icons/io5";
 import { IoIosClose } from "react-icons/io";
 
 import Image from "next/image";
@@ -9,17 +9,17 @@ import medalha from '../Assets/medalha (1).png';
 
 import { CompletionContext } from "../hook/useCompletion";
 
-import { storage } from "../services/firebaseConfig";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { blob } from "stream/consumers";
-import { serverTimestamp } from "firebase/database";
+import { auth, storage } from "../services/firebaseConfig";
+import { ref, uploadBytes } from "firebase/storage";
+import { onAuthStateChanged } from "firebase/auth";
+import { useRouter } from "next/navigation";
 
 
 export default function CheckList() {
 
-    const [cam, setCam] = useState(false)
+    const router = useRouter()
 
-    const [foto, setFoto] = useState<File>({} as File)
+    const [cam, setCam] = useState(false)
 
     const [hasPhoto, setHasPhoto] = useState(false)
 
@@ -153,6 +153,20 @@ export default function CheckList() {
         
     }
 
+    function verifiedUser() {
+        onAuthStateChanged(auth, currentUser => {
+            if (currentUser?.email === undefined) {
+                router.push('/')
+            } else {
+                
+            }
+        })
+    }
+
+    useEffect(() => {
+        verifiedUser()
+    }, [])
+
     return (
 
         <div className="px-10  w-full h-full overflow-y-scroll ">
@@ -170,7 +184,7 @@ export default function CheckList() {
                         </div>
                         
                         <button onClick={() => {setCam(false)}} 
-                            className="absolute top-6 left-6 bg-white text-black rounded-full duration-300 hover:top-5 hover:left-7">
+                            className="absolute top-6 left-6 bg-white text-black rounded-full duration-200 hover:top-5 hover:left-7">
                             <IoIosClose size={40}/>        
                         </button>
                         
