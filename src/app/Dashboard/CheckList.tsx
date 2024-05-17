@@ -11,8 +11,8 @@ import { CompletionContext } from "../hook/useCompletion";
 
 import { auth, storage } from "../services/firebaseConfig";
 import { ref, uploadBytes } from "firebase/storage";
-import { onAuthStateChanged } from "firebase/auth";
-import { useRouter } from "next/navigation";
+import { onAuthStateChanged, updateProfile } from "firebase/auth";
+import { useRouter, usePathname } from "next/navigation";
 
 
 export default function CheckList() {
@@ -20,6 +20,8 @@ export default function CheckList() {
     const router = useRouter()
 
     const [cam, setCam] = useState(false)
+
+    const [user, setUser] = useState<string|null>('')
 
     const [hasPhoto, setHasPhoto] = useState(false)
 
@@ -153,19 +155,19 @@ export default function CheckList() {
         
     }
 
-    function verifiedUser() {
-        onAuthStateChanged(auth, currentUser => {
-            if (currentUser?.email === undefined) {
-                router.push('/')
-            } else {
-                
-            }
-        })
-    }
-
     useEffect(() => {
-        verifiedUser()
-    }, [])
+        const unsubscribe = auth.onAuthStateChanged((user) => {
+          if (user) {
+            setUser(user.displayName)
+          } else {
+            if ( usePathname() !== '/login') {
+                router.push('/login');
+            }
+          }
+        });
+    
+        return () => unsubscribe();
+      }, [router]); 
 
     return (
 
@@ -219,6 +221,7 @@ export default function CheckList() {
 
             <div className="flex flex-col p-10 pb-20 gap-16">
 
+                
 
                 { list.map( (val, id) => (
                     <div key={id} className="flex flex-col relative items-center">
