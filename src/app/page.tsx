@@ -4,6 +4,7 @@ import Header from "./Header/Header";
 import CheckList from "./Dashboard/CheckList";
 import NavBar from "./Footer/NavBar";
 import { CompletionProvider } from "./hook/useCompletion";
+import { DataUserProvider } from "./hook/useDataUser";
 
 export default function Home() {
 
@@ -12,11 +13,15 @@ export default function Home() {
       
       <CompletionProvider>
 
-        <Header/>
+        <DataUserProvider>
 
-        <CheckList/>
+          <Header/>
 
-        <NavBar/>
+          <CheckList/>
+
+          <NavBar/>
+
+        </DataUserProvider>
 
       </CompletionProvider>
 

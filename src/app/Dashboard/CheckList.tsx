@@ -9,20 +9,21 @@ import medalha from '../Assets/medalha (1).png';
 
 import { CompletionContext } from "../hook/useCompletion";
 
-import { auth, storage } from "../services/firebaseConfig";
+import { db, storage } from "../services/firebaseConfig";
 import { ref, uploadBytes } from "firebase/storage";
-import { onAuthStateChanged, updateProfile } from "firebase/auth";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 
+interface listType {
+    name: string;
+    check: boolean;
+    description: string;
+    image: string;
+}
 
 export default function CheckList() {
 
-    const router = useRouter()
-
     const [cam, setCam] = useState(false)
-
-    const [user, setUser] = useState<string|null>('')
-
     const [hasPhoto, setHasPhoto] = useState(false)
 
     const [ workChecked, setWorkChecked ] = useState({
@@ -103,7 +104,7 @@ export default function CheckList() {
         }
     };
 
-    const [ list, setList ] = useState([
+    const [ list, setList ] = useState<listType[]>([
         {
             name: 'Fachada da Loja',
             check: false,
@@ -136,7 +137,7 @@ export default function CheckList() {
         },
     ])
 
-    const HandleCheck = () => {
+    const HandleCheck = async () => {
         setCam(false)
 
         uploadPhotoToStorage()
@@ -152,22 +153,55 @@ export default function CheckList() {
         
             return newList; // Retornando a nova lista atualizada
         });
+
+        const docRef = doc(db, '01', 'checkList');
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            
+            // Obtenha o array do documento
+            const checkList = docSnap.data().items;
+
+            // Verifique se o índice fornecido é válido
+            if (workChecked.id >= 0 && workChecked.id < checkList.length) {
+                
+                // Atualize o valor "check" do objeto no índice especificado
+                checkList[workChecked.id].check = true;
+
+                // Atualize o documento no Firestore com o array modificado
+                await updateDoc(docRef, {
+                    items: checkList
+                });
+            } else {
+                console.log("Índice fora dos limites.");
+            }
+        } else {
+            console.log("Documento não encontrado.");
+        }
         
     }
 
+    async function getCheckListData() {
+        const docRef = doc(db, "01", "checkList");
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            const checkList:listType[] = docSnap.data().items
+            setList(checkList)
+        } else {
+        // docSnap.data() will be undefined in this case
+            console.log("No such document!");
+        }
+    }
+
     useEffect(() => {
-        const unsubscribe = auth.onAuthStateChanged((user) => {
-          if (user) {
-            setUser(user.displayName)
-          } else {
-            if ( usePathname() !== '/login') {
-                router.push('/login');
-            }
-          }
-        });
-    
-        return () => unsubscribe();
-      }, [router]); 
+        getCheckListData()
+    }, [])
+
+    async function setData() {
+        const imageRef = ref(storage, 'caminho/para/sua/imagem.jpg');
+
+    }
 
     return (
 
@@ -221,7 +255,7 @@ export default function CheckList() {
 
             <div className="flex flex-col p-10 pb-20 gap-16">
 
-                
+                <button onClick={setData}>save</button>
 
                 { list.map( (val, id) => (
                     <div key={id} className="flex flex-col relative items-center">

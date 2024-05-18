@@ -5,12 +5,13 @@ import sun_sad from '../Assets/sun_sad.svg';
 
 import Image from "next/image";
 import { CompletionContext } from "../hook/useCompletion";
-import { useContext } from "react";
+import { createContext, useContext, useState } from "react";
 import { auth } from "../services/firebaseConfig";
+import { DataUserContext } from "../hook/useDataUser";
 
 export default function Header() {
 
-    const user = auth.currentUser;
+    const { userName } = useContext(DataUserContext)
 
     const {completionPercentage} = useContext(CompletionContext)
 
@@ -28,7 +29,7 @@ export default function Header() {
                         </div>
 
                         <div className="p-2 px-4 rounded-full bg-yellow-400 text-lg font-bold text-white">
-                            {user?.displayName}
+                            {userName}
                         </div>
                     </div>
 
