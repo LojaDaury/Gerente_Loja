@@ -10,9 +10,11 @@ import medalha from '../Assets/medalha (1).png';
 import { CompletionContext } from "../hook/useCompletion";
 
 import { db, storage } from "../services/firebaseConfig";
-import { ref, uploadBytes } from "firebase/storage";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useRouter } from "next/navigation";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { DataUserContext } from "../hook/useDataUser";
+import { child } from "firebase/database";
 
 interface listType {
     name: string;
@@ -31,7 +33,9 @@ export default function CheckList() {
         id: 0
     })
 
-    const {createCompletionPercentage} = useContext(CompletionContext)
+    const {userData} = useContext(DataUserContext)
+
+    const {createCompletionPercentage, completionPercentage} = useContext(CompletionContext)
 
     const videoRef = useRef<HTMLVideoElement>(null)
     const photoRef = useRef<HTMLCanvasElement>(null)
@@ -82,26 +86,46 @@ export default function CheckList() {
 
     }
 
-    const uploadPhotoToStorage = async () => {
+    const todayDate = () => {
         const today = new Date()
         const day = today.getDate();
         const month = today.getMonth() + 1;
         const formattedDate = `${day < 10 ? ('0' + day) : day}_${month < 10 ? ('0' + month) : month}`;
 
+        return formattedDate
+    }
+
+    const uploadPhotoToStorage = async () => {
+       
+        const formattedDate = todayDate();
+
         const storageRef = ref(storage, `1/${formattedDate}/${workChecked.name}.jpg`);
 
-
-        if (photoRef.current) {
-            photoRef.current.toBlob( blob => {
-                if (blob) {
-                    uploadBytes(storageRef, blob).then(
-                        (snapshot) => {
+        return new Promise<string>((resolve, reject) => {
+            if (photoRef.current) {
+                photoRef.current.toBlob(blob => {
+                    if (blob) {
+                        uploadBytes(storageRef, blob).then(snapshot => {
                             console.log('Uploaded a blob or file!');
-                        }
-                    );
-                }
-            })
-        }
+                            getDownloadURL(storageRef).then(url => {
+                                resolve(url);
+                            }).catch(error => {
+                                console.error('Error getting download URL:', error);
+                                reject(error);
+                            });
+                        }).catch(error => {
+                            console.error('Error uploading file:', error);
+                            reject(error);
+                        });
+                    } else {
+                        reject('Blob not available');
+                    }
+                });
+            } else {
+                reject('Photo ref not available');
+            }
+        });
+
     };
 
     const [ list, setList ] = useState<listType[]>([
@@ -138,70 +162,61 @@ export default function CheckList() {
     ])
 
     const HandleCheck = async () => {
+        const formattedDate = todayDate();
         setCam(false)
-
-        uploadPhotoToStorage()
-
+        const docRef = doc(db, '01', 'checkList');
+        
+        const imageUrl = await uploadPhotoToStorage();
+        
         setList(prevList => {
             const newList = [...prevList]; // Criando uma cópia do array original
-            newList[workChecked.id] = { ...newList[workChecked.id], check: true }; // Modificando o objeto desejado
+            newList[workChecked.id] = { ...newList[workChecked.id], check: true, image: imageUrl }; // Modificando o objeto desejado
         
             const checkedCount = newList.filter(item => item.check).length; // Usando a lista atualizada
             const totalItems = newList.length;
             const percentage = (checkedCount / totalItems) * 100;
             createCompletionPercentage(percentage);
-        
+
+            updateDoc(docRef, {
+                items: newList,
+                completionPercentage: percentage
+            });
+            
             return newList; // Retornando a nova lista atualizada
         });
-
-        const docRef = doc(db, '01', 'checkList');
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists()) {
-            
-            // Obtenha o array do documento
-            const checkList = docSnap.data().items;
-
-            // Verifique se o índice fornecido é válido
-            if (workChecked.id >= 0 && workChecked.id < checkList.length) {
-                
-                // Atualize o valor "check" do objeto no índice especificado
-                checkList[workChecked.id].check = true;
-
-                // Atualize o documento no Firestore com o array modificado
-                await updateDoc(docRef, {
-                    items: checkList
-                });
-            } else {
-                console.log("Índice fora dos limites.");
-            }
-        } else {
-            console.log("Documento não encontrado.");
-        }
         
     }
 
     async function getCheckListData() {
+        const today = new Date().toLocaleDateString();
         const docRef = doc(db, "01", "checkList");
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
-            const checkList:listType[] = docSnap.data().items
-            setList(checkList)
+            const data = docSnap.data();
+            const lastOpenedDate = data.lastOpenedDate;
+    
+            // Verifique se a data atual é diferente da última data registrada
+            if (lastOpenedDate !== today) {
+                // Atualize a variável "check" para false em cada item do array
+                const updatedItems = data.items.map((item: any) => ({ ...item, check: false }));
+                await updateDoc(docRef, { items: updatedItems, lastOpenedDate: today, completionPercentage: 0 });
+        
+            } else {
+                const checkList:listType[] = docSnap.data().items
+                const percentage = docSnap.data().completionPercentage
+                setList(checkList)
+                createCompletionPercentage(percentage)
+            }
         } else {
         // docSnap.data() will be undefined in this case
             console.log("No such document!");
-        }
+        }    
     }
 
     useEffect(() => {
         getCheckListData()
     }, [])
-
-    async function setData() {
-        const imageRef = ref(storage, 'caminho/para/sua/imagem.jpg');
-
-    }
 
     return (
 
@@ -253,30 +268,38 @@ export default function CheckList() {
                 )
             }
 
-            <div className="flex flex-col p-10 pb-20 gap-16">
+            { userData.usuario == 'admin' 
+                ?
+                <div>
+                    <button >
+                        Campo Grande
+                    </button>
+                </div>
+                :
+                <div className="flex flex-col p-10 pb-20 gap-16">
 
-                <button onClick={setData}>save</button>
+                    { list.map( (val, id) => (
+                        <div key={id} className="flex flex-col relative items-center">
+                    
+                            <button
+                                onClick={() => {getVideo(), setWorkChecked({name:val.name, id:id})}} 
+                                className={`
+                                    flex w-48 justify-center  p-4 rounded-xl  duration-500 delay-500  
+                                    ${val.check
+                                        ? 'bg-yellow-400 text-white border-b-4 border-yellow-600 shadow-sm_yellow animate-jump animate-delay-500 animate-duration-[1500ms]'
+                                        : 'bg-gray-100 border-b-4 border-gray-500 text-gray-700 shadow-sm_gray'
+                                    }`}
+                            >
+                                <text className="font-black drop-shadow-md ">{val.name}</text>
+                            </button>
 
-                { list.map( (val, id) => (
-                    <div key={id} className="flex flex-col relative items-center">
-                
-                        <button
-                            onClick={() => {getVideo(), setWorkChecked({name:val.name, id:id})}} 
-                            className={`
-                                flex w-48 justify-center  p-4 rounded-xl  duration-500 delay-500  
-                                ${val.check
-                                    ? 'bg-yellow-400 text-white border-b-4 border-yellow-600 shadow-sm_yellow animate-jump animate-delay-500 animate-duration-[1500ms]'
-                                    : 'bg-gray-100 border-b-4 border-gray-500 text-gray-700 shadow-sm_gray'
-                                }`}
-                        >
-                            <text className="font-black drop-shadow-md ">{val.name}</text>
-                        </button>
+                            <Image alt="" src={medalha} className={`w-14 h-14 -z-10 delay-500 duration-500 absolute ${val.check?'-bottom-12':'-bottom-0'}`}/>
+                        </div>
+                    ))}
 
-                        <Image alt="" src={medalha} className={`w-14 h-14 -z-10 delay-500 duration-500 absolute ${val.check?'-bottom-12':'-bottom-0'}`}/>
-                    </div>
-                ))}
+                </div>
 
-            </div>
+            }
            
         </div>
 

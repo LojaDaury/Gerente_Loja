@@ -11,7 +11,7 @@ import { DataUserContext } from "../hook/useDataUser";
 
 export default function Header() {
 
-    const { userName } = useContext(DataUserContext)
+    const { userData } = useContext(DataUserContext)
 
     const {completionPercentage} = useContext(CompletionContext)
 
@@ -29,7 +29,7 @@ export default function Header() {
                         </div>
 
                         <div className="p-2 px-4 rounded-full bg-yellow-400 text-lg font-bold text-white">
-                            {userName}
+                            {userData.nome}
                         </div>
                     </div>
 

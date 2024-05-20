@@ -1,7 +1,14 @@
 
-import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
-import { auth } from '../services/firebaseConfig';
-import { usePathname, useRouter } from 'next/navigation';
+import React, { createContext, ReactNode, useEffect, useState } from 'react';
+import { auth, db } from '../services/firebaseConfig';
+import { useRouter } from 'next/navigation';
+import { doc, getDoc } from 'firebase/firestore';
+
+export interface userDataType {
+    nome: string,
+    loja: string,
+    usuario: string
+}
 
 interface DataUserProviderProps {
     children: ReactNode;
@@ -9,7 +16,7 @@ interface DataUserProviderProps {
 
 // Definindo o tipo para os dados do contexto
 interface DataUserContextData {
-  userName: string;
+  userData: userDataType;
 }
 
 // Criando o contexto
@@ -21,12 +28,21 @@ export const DataUserContext = createContext<DataUserContextData>(
 export function DataUserProvider ({ children }: DataUserProviderProps) {
     const router = useRouter()
   
-    const [userName, setUserName] = useState('');
+    const [userData, setUserData] = useState<userDataType>({} as userDataType);
 
     useEffect(() => {
-        const unsubscribe = auth.onAuthStateChanged((user) => {
+        
+
+        const unsubscribe = auth.onAuthStateChanged(async (user) => {
             if (user) {
-                if (user.displayName) { setUserName(user.displayName) }
+                const docRef = doc(db, `${user.email?.slice(0,2)}`, "userData");
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const items = docSnap.data().data
+                    setUserData(items)
+                }
+
             } else {
                 if ( window.location.pathname !== '/login') {
                     router.push('/login');
@@ -38,7 +54,7 @@ export function DataUserProvider ({ children }: DataUserProviderProps) {
     }, [router]); 
 
     return (
-        <DataUserContext.Provider value={{userName}}>
+        <DataUserContext.Provider value={{userData}}>
             {children}
         </DataUserContext.Provider>
     );
