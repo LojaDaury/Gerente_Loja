@@ -1,3 +1,4 @@
+"use client"
 import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { auth } from '../services/firebaseConfig';
 import { usePathname, useRouter } from 'next/navigation';
