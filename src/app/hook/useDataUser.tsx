@@ -1,4 +1,4 @@
-"use client"
+
 import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { auth } from '../services/firebaseConfig';
 import { usePathname, useRouter } from 'next/navigation';
@@ -28,7 +28,7 @@ export function DataUserProvider ({ children }: DataUserProviderProps) {
             if (user) {
                 if (user.displayName) { setUserName(user.displayName) }
             } else {
-                if ( usePathname() !== '/login') {
+                if ( window.location.pathname !== '/login') {
                     router.push('/login');
                 }
             }
