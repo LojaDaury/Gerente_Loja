@@ -11,10 +11,8 @@ import { CompletionContext } from "../hook/useCompletion";
 
 import { db, storage } from "../services/firebaseConfig";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { useRouter } from "next/navigation";
-import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { DataUserContext } from "../hook/useDataUser";
-import { child } from "firebase/database";
 
 interface listType {
     name: string;
@@ -162,7 +160,6 @@ export default function CheckList() {
     ])
 
     const HandleCheck = async () => {
-        const formattedDate = todayDate();
         setCam(false)
         const docRef = doc(db, '01', 'checkList');
         
@@ -199,7 +196,7 @@ export default function CheckList() {
             // Verifique se a data atual é diferente da última data registrada
             if (lastOpenedDate !== today) {
                 // Atualize a variável "check" para false em cada item do array
-                const updatedItems = data.items.map((item: any) => ({ ...item, check: false }));
+                const updatedItems = data.items.map((item: any) => ({ ...item, check: false, image: '' }));
                 await updateDoc(docRef, { items: updatedItems, lastOpenedDate: today, completionPercentage: 0 });
         
             } else {
